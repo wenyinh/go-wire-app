@@ -12,14 +12,20 @@ import (
 
 // Global
 var wireSet = wire.NewSet(
-	user.NewController,
+	// Controller
+	user.NewController, // Service
+	// Service
 	wire.Bind(new(service.UserService), new(*service.UserServiceImpl)),
 	service.NewUserService,
+	// Repository
 	wire.Bind(new(repository.UserRepository), new(*repository.UserRepositoryImpl)),
 	repository.NewUserRepository,
+	// DBClient
 	wire.Bind(new(client.DBClient), new(*client.GormDBClient)),
 	client.NewDatabaseClient,
+	// CacheClient
 	redis.NewCacheClient,
+	// Config
 	wire.FieldsOf(
 		new(*config.AppConfiguration),
 		"DBConfig",
