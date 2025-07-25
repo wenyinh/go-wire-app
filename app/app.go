@@ -88,7 +88,8 @@ func (a *App) SetupRouter(_ context.Context, router *gin.Engine) (*gin.Engine, e
 
 	r := router.Group("")
 	// Config middleware
-	r.Use(handler.RecoveryHandler())
+	r.Use(handler.GinLogger())
+	r.Use(handler.GinRecovery(true))
 
 	r.GET(HealthStatusUri, GetHealthStatus)
 	r.HEAD(HealthStatusUri, GetHealthStatus)

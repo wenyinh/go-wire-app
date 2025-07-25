@@ -3,7 +3,7 @@ app:
   name: "go-wire-app"
 database:
   driver: "mysql"
-  address: "root:@tcp(127.0.0.1:3306)/go_web_app_db?charset=utf8mb4&parseTime=True"
+  address: "root:20011024@tcp(127.0.0.1:3306)/go_web_app_db?charset=utf8mb4&parseTime=True"
   maxIdleConns: 1
   maxOpenConns: 1
   connMaxLifetime: "1h"
