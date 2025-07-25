@@ -24,17 +24,17 @@ type UserService interface {
 }
 
 type UserServiceImpl struct {
-	userRepository repository.UserRepository
-	cacheClient    *redis.CacheClient
+	userRepository       repository.UserRepository
+	cacheClientInterface redis.CacheClientInterface
 }
 
 // assertion
 var _ UserService = &UserServiceImpl{}
 
-func NewUserService(userRepository repository.UserRepository, cacheClient *redis.CacheClient) (*UserServiceImpl, error) {
+func NewUserService(userRepository repository.UserRepository, cacheClientInterface redis.CacheClientInterface) (*UserServiceImpl, error) {
 	return &UserServiceImpl{
-		userRepository: userRepository,
-		cacheClient:    cacheClient,
+		userRepository:       userRepository,
+		cacheClientInterface: cacheClientInterface,
 	}, nil
 }
 
@@ -67,7 +67,7 @@ func (svc *UserServiceImpl) GetUser(ctx context.Context, req model.GetUserReques
 	cacheKey := fmt.Sprintf("user:%d", req.UserId)
 
 	// 1. Ping Redis
-	err := svc.cacheClient.Ping(ctx)
+	err := svc.cacheClientInterface.Ping(ctx)
 	if err != nil {
 		logger.Warn("failed to ping Redis", zap.Error(err))
 		return nil, err
@@ -75,7 +75,7 @@ func (svc *UserServiceImpl) GetUser(ctx context.Context, req model.GetUserReques
 	logger.Info("succeed to ping Redis")
 
 	// 2. 尝试从 Redis 获取
-	cached, err := svc.cacheClient.Client.Get(ctx, cacheKey).Result()
+	cached, err := svc.cacheClientInterface.RDB().Get(ctx, cacheKey).Result()
 	if err == nil {
 		var user entity.UserEntity
 		unmarshalErr := json.Unmarshal([]byte(cached), &user)
@@ -116,7 +116,7 @@ func (svc *UserServiceImpl) GetUser(ctx context.Context, req model.GetUserReques
 	// 4. 写入 Redis，过期时间 1 小时
 	data, err := json.Marshal(userEntity)
 	if err == nil {
-		setErr := svc.cacheClient.Client.Set(ctx, cacheKey, data, time.Hour).Err()
+		setErr := svc.cacheClientInterface.RDB().Set(ctx, cacheKey, data, time.Hour).Err()
 		if setErr != nil {
 			logger.Warn("failed to cache user in Redis", zap.Error(setErr))
 		}

@@ -24,6 +24,7 @@ var wireSet = wire.NewSet(
 	wire.Bind(new(client.DBClient), new(*client.GormDBClient)),
 	client.NewDatabaseClient,
 	// CacheClient
+	wire.Bind(new(redis.CacheClientInterface), new(*redis.CacheClient)),
 	redis.NewCacheClient,
 	// Config
 	wire.FieldsOf(

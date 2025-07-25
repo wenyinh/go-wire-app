@@ -25,19 +25,22 @@ func InitializeApp(config2 *config.AppConfiguration) (*App, func(), error) {
 	}
 	userRepositoryImpl := repository.NewUserRepository(gormDBClient)
 	redisConfig := config2.RedisConfig
-	cacheClient := redis.NewCacheClient(redisConfig)
+	cacheClient, cleanup2 := redis.NewCacheClient(redisConfig)
 	userServiceImpl, err := service.NewUserService(userRepositoryImpl, cacheClient)
 	if err != nil {
+		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
 	controller, err := user.NewController(userServiceImpl)
 	if err != nil {
+		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
 	app := New(config2, controller)
 	return app, func() {
+		cleanup2()
 		cleanup()
 	}, nil
 }
