@@ -1,0 +1,29 @@
+package app
+
+import (
+	"github.com/google/wire"
+	"github.com/wenyinh/go-wire-app/api/v1/user"
+	"github.com/wenyinh/go-wire-app/pkg/config"
+	"github.com/wenyinh/go-wire-app/pkg/service"
+	"github.com/wenyinh/go-wire-app/pkg/storage/client"
+	"github.com/wenyinh/go-wire-app/pkg/storage/redis"
+	"github.com/wenyinh/go-wire-app/pkg/storage/repository"
+)
+
+// Global
+var wireSet = wire.NewSet(
+	user.NewController,
+	wire.Bind(new(service.UserService), new(*service.UserServiceImpl)),
+	service.NewUserService,
+	wire.Bind(new(repository.UserRepository), new(*repository.UserRepositoryImpl)),
+	repository.NewUserRepository,
+	wire.Bind(new(client.DBClient), new(*client.GormDBClient)),
+	client.NewDatabaseClient,
+	redis.NewCacheClient,
+	wire.FieldsOf(
+		new(*config.AppConfiguration),
+		"DBConfig",
+		"AppConfig",
+		"RedisConfig",
+	),
+)
