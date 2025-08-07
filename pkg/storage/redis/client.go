@@ -2,23 +2,23 @@ package redis
 
 import (
 	"context"
-	goRedis "github.com/redis/go-redis/v9"
+	"github.com/redis/go-redis/v9"
 	"github.com/wenyinh/go-wire-app/pkg/config"
 )
 
 type CacheClientInterface interface {
-	RDB() *goRedis.Client
+	RDB() *redis.Client
 	Close() error
 	Ping(context.Context) error
 }
 
 type CacheClient struct {
-	Client *goRedis.Client
+	Client *redis.Client
 	config *config.RedisConfig
 }
 
 func NewCacheClient(cfg config.RedisConfig) (*CacheClient, func()) {
-	rdb := goRedis.NewClient(&goRedis.Options{
+	rdb := redis.NewClient(&redis.Options{
 		Addr:     cfg.Addr,
 		Password: cfg.Password,
 		DB:       cfg.DB,
@@ -35,7 +35,7 @@ func (r *CacheClient) Ping(ctx context.Context) error {
 	return r.Client.Ping(ctx).Err()
 }
 
-func (r *CacheClient) RDB() *goRedis.Client {
+func (r *CacheClient) RDB() *redis.Client {
 	return r.Client
 }
 
