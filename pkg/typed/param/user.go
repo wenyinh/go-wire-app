@@ -1,4 +1,4 @@
-package model
+package param
 
 import "github.com/wenyinh/go-wire-app/pkg/typed/entity"
 

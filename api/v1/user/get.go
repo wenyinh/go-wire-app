@@ -2,14 +2,14 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/wenyinh/go-wire-app/pkg/typed/model"
+	"github.com/wenyinh/go-wire-app/pkg/typed/param"
 	"github.com/wenyinh/go-wire-app/pkg/utils"
 )
 
 const GetUserUri = "/:userId"
 
 func (ctrl *Controller) GetUser(c *gin.Context) {
-	var req model.GetUserRequest
+	var req param.GetUserRequest
 	// 1. 参数绑定
 	if err := c.ShouldBindUri(&req); err != nil {
 		utils.Fail(c, "Invalid request")

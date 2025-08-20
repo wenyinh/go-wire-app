@@ -10,7 +10,7 @@ import (
 	"github.com/wenyinh/go-wire-app/pkg/storage/redis"
 	"github.com/wenyinh/go-wire-app/pkg/storage/repository"
 	"github.com/wenyinh/go-wire-app/pkg/typed/entity"
-	"github.com/wenyinh/go-wire-app/pkg/typed/model"
+	"github.com/wenyinh/go-wire-app/pkg/typed/param"
 	"go.uber.org/zap"
 	"strconv"
 	"time"
@@ -19,8 +19,8 @@ import (
 /* ************************** Interface & Implementation ************************** */
 
 type UserService interface {
-	CreateUser(ctx context.Context, req model.CreateUserRequest) (*model.CreateUserResponse, error)
-	GetUser(ctx context.Context, req model.GetUserRequest) (*model.GetUserResponse, error)
+	CreateUser(ctx context.Context, req param.CreateUserRequest) (*param.CreateUserResponse, error)
+	GetUser(ctx context.Context, req param.GetUserRequest) (*param.GetUserResponse, error)
 }
 
 type UserServiceImpl struct {
@@ -38,7 +38,7 @@ func NewUserService(userRepository repository.UserRepository, cacheClientInterfa
 	}, nil
 }
 
-func (svc *UserServiceImpl) CreateUser(ctx context.Context, req model.CreateUserRequest) (*model.CreateUserResponse, error) {
+func (svc *UserServiceImpl) CreateUser(ctx context.Context, req param.CreateUserRequest) (*param.CreateUserResponse, error) {
 	// 1. 构造 UserDataModel
 	now := time.Now()
 	userModel := &dataModel.UserDataModel{
@@ -56,13 +56,13 @@ func (svc *UserServiceImpl) CreateUser(ctx context.Context, req model.CreateUser
 		return nil, err
 	}
 	// 3. 构造响应
-	resp := &model.CreateUserResponse{
+	resp := &param.CreateUserResponse{
 		UserId: newModel.ID,
 	}
 	return resp, nil
 }
 
-func (svc *UserServiceImpl) GetUser(ctx context.Context, req model.GetUserRequest) (*model.GetUserResponse, error) {
+func (svc *UserServiceImpl) GetUser(ctx context.Context, req param.GetUserRequest) (*param.GetUserResponse, error) {
 	logger := zap.L().With(zap.String("method", "UserService.GetUser"), zap.String("userID", strconv.FormatUint(req.UserId, 10)))
 	cacheKey := fmt.Sprintf("user:%d", req.UserId)
 
@@ -81,7 +81,7 @@ func (svc *UserServiceImpl) GetUser(ctx context.Context, req model.GetUserReques
 		unmarshalErr := json.Unmarshal([]byte(cached), &user)
 		if unmarshalErr == nil {
 			logger.Info("user fetched from Redis")
-			return &model.GetUserResponse{User: user}, nil
+			return &param.GetUserResponse{User: user}, nil
 		}
 		logger.Warn("failed to unmarshal Redis user", zap.Error(unmarshalErr))
 	} else if err != goRedis.Nil {
@@ -109,7 +109,7 @@ func (svc *UserServiceImpl) GetUser(ctx context.Context, req model.GetUserReques
 		UpdateTime: userModel.UpdateTime,
 	}
 
-	resp := &model.GetUserResponse{
+	resp := &param.GetUserResponse{
 		User: userEntity,
 	}
 
