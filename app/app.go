@@ -61,14 +61,14 @@ func (a *App) Serve(rootCtx context.Context) {
 	// kill -2 is syscall.SIGINT
 	// kill -9 is syscall.SIGKILL but can't be caught, so don't need to add it
 	stopCtx, stop := signal.NotifyContext(rootCtx, syscall.SIGINT, syscall.SIGTERM)
-	defer stop()
+	defer stop() // 停止监听signal
 	<-stopCtx.Done()
 	zap.L().Info("shutting down server")
 
 	// The context is used to inform the server it has 5 seconds to finish
 	// the request it is currently handling
 	closeCtx, cancel := context.WithTimeout(rootCtx, 5*time.Second)
-	defer cancel()
+	defer cancel() // 停止定时器
 
 	var wg sync.WaitGroup
 	wg.Add(1)
