@@ -16,7 +16,7 @@ func LoadConfiguration() (*config.AppConfiguration, error) {
 	var configFile string
 	f := flag.NewFlagSet(constants.AppName, flag.ExitOnError)
 	f.StringVar(&configType, "config-type", "yaml", "the type of config file")
-	f.StringVar(&configFile, "config-file", "./app.yaml", "the location of config file")
+	f.StringVar(&configFile, "config-file", "./application.yaml", "the location of config file")
 	err := f.Parse(os.Args[1:])
 	if err != nil {
 		fmt.Println("Failed to parse command flags, error:", err)
