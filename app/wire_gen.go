@@ -8,10 +8,10 @@ package app
 
 import (
 	"github.com/wenyinh/go-wire-app/api/v1/user"
+	client2 "github.com/wenyinh/go-wire-app/pkg/client"
 	"github.com/wenyinh/go-wire-app/pkg/config"
 	"github.com/wenyinh/go-wire-app/pkg/service"
 	"github.com/wenyinh/go-wire-app/pkg/storage/client"
-	"github.com/wenyinh/go-wire-app/pkg/storage/redis"
 	"github.com/wenyinh/go-wire-app/pkg/storage/repository"
 )
 
@@ -25,7 +25,7 @@ func InitializeApp(config2 *config.AppConfiguration) (*App, func(), error) {
 	}
 	userRepositoryImpl := repository.NewUserRepository(gormDBClient)
 	redisConfig := config2.RedisConfig
-	cacheClient, cleanup2 := redis.NewCacheClient(redisConfig)
+	cacheClient, cleanup2 := client2.NewCacheClient(redisConfig)
 	userServiceImpl, err := service.NewUserService(userRepositoryImpl, cacheClient)
 	if err != nil {
 		cleanup2()

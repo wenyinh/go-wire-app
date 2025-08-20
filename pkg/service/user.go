@@ -6,8 +6,8 @@ import (
 	"errors"
 	"fmt"
 	goRedis "github.com/redis/go-redis/v9"
+	"github.com/wenyinh/go-wire-app/pkg/client"
 	dataModel "github.com/wenyinh/go-wire-app/pkg/storage/model"
-	"github.com/wenyinh/go-wire-app/pkg/storage/redis"
 	"github.com/wenyinh/go-wire-app/pkg/storage/repository"
 	"github.com/wenyinh/go-wire-app/pkg/typed/entity"
 	"github.com/wenyinh/go-wire-app/pkg/typed/param"
@@ -25,13 +25,13 @@ type UserService interface {
 
 type UserServiceImpl struct {
 	userRepository       repository.UserRepository
-	cacheClientInterface redis.CacheClientInterface
+	cacheClientInterface client.CacheClientInterface
 }
 
 // assertion
 var _ UserService = &UserServiceImpl{}
 
-func NewUserService(userRepository repository.UserRepository, cacheClientInterface redis.CacheClientInterface) (*UserServiceImpl, error) {
+func NewUserService(userRepository repository.UserRepository, cacheClientInterface client.CacheClientInterface) (*UserServiceImpl, error) {
 	return &UserServiceImpl{
 		userRepository:       userRepository,
 		cacheClientInterface: cacheClientInterface,

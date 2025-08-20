@@ -3,10 +3,10 @@ package app
 import (
 	"github.com/google/wire"
 	"github.com/wenyinh/go-wire-app/api/v1/user"
+	client2 "github.com/wenyinh/go-wire-app/pkg/client"
 	"github.com/wenyinh/go-wire-app/pkg/config"
 	"github.com/wenyinh/go-wire-app/pkg/service"
 	"github.com/wenyinh/go-wire-app/pkg/storage/client"
-	"github.com/wenyinh/go-wire-app/pkg/storage/redis"
 	"github.com/wenyinh/go-wire-app/pkg/storage/repository"
 )
 
@@ -24,8 +24,8 @@ var wireSet = wire.NewSet(
 	wire.Bind(new(client.DBClient), new(*client.GormDBClient)),
 	client.NewDatabaseClient,
 	// CacheClient
-	wire.Bind(new(redis.CacheClientInterface), new(*redis.CacheClient)),
-	redis.NewCacheClient,
+	wire.Bind(new(client2.CacheClientInterface), new(*client2.CacheClient)),
+	client2.NewCacheClient,
 	// Config
 	wire.FieldsOf(
 		new(*config.AppConfiguration),
